@@ -2,6 +2,7 @@
   "use strict";
 
   const stage = document.getElementById("stage");
+  const viewportElement = document.querySelector(".viewport");
   const startScreen = document.getElementById("startScreen");
   const gameScreen = document.getElementById("gameScreen");
   const failScreen = document.getElementById("failScreen");
@@ -41,19 +42,32 @@
   let distance = 0;
   let obstacles = [];
   let hidden = document.hidden;
+  let pageHidden = false;
+  let inViewport = true;
   const playerX = 86;
+  const playerHitRadiusX = 17;
+  const playerHitRadiusY = 18.5;
+  const gutTopInnerEdge = 233;
+  const gutBottomInnerEdge = 575;
   const sceneLength = 2528;
   const initialSpeed = 94;
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   function resizeStage() {
-    const scale = Math.min(window.innerWidth / 360, window.innerHeight / 640);
-    const logicalHeight = window.innerHeight / scale;
-    stage.style.height = `${logicalHeight}px`;
-    stage.style.setProperty("--content-offset", `${(logicalHeight - 640) / 2}px`);
-    stage.style.transform = `scale(${scale})`;
+    const visualViewport = window.visualViewport;
+    const viewportWidth = visualViewport?.width || document.documentElement.clientWidth;
+    const viewportHeight = visualViewport?.height || window.innerHeight;
+    const viewportLeft = visualViewport?.offsetLeft || 0;
+    const viewportTop = visualViewport?.offsetTop || 0;
+    viewportElement.style.setProperty("--viewport-width", `${viewportWidth}px`);
+    viewportElement.style.setProperty("--viewport-height", `${viewportHeight}px`);
+    viewportElement.style.setProperty("--viewport-left", `${viewportLeft}px`);
+    viewportElement.style.setProperty("--viewport-top", `${viewportTop}px`);
+    const scale = Math.min(viewportWidth / 360, viewportHeight / 640);
+    stage.style.setProperty("--stage-scale", String(scale));
   }
   window.addEventListener("resize", resizeStage, { passive: true });
+  window.visualViewport?.addEventListener("resize", resizeStage, { passive: true });
   resizeStage();
   if (debug) stage.classList.add("debug");
 
@@ -102,7 +116,6 @@
       const key = item.src.match(/(?:bac|txt)\d+/)[0];
       const [width, height] = sizes[key];
       image.className = `obstacle${debug ? " debug" : ""}`;
-      image.src = item.src;
       image.alt = "";
       image.draggable = false;
       image.style.width = `${width / 2}px`;
@@ -110,7 +123,9 @@
       image.addEventListener("load", () => {
         image.style.width = `${image.naturalWidth / 2}px`;
         image.style.height = `${image.naturalHeight / 2}px`;
+        image.alphaMask = createAlphaMask(image);
       }, { once: true });
+      image.src = item.src;
       obstacleLayer.appendChild(image);
       return {
         image,
@@ -120,6 +135,19 @@
         passed: false
       };
     });
+  }
+
+  function createAlphaMask(image) {
+    const canvas = document.createElement("canvas");
+    canvas.width = image.naturalWidth;
+    canvas.height = image.naturalHeight;
+    const context = canvas.getContext("2d", { willReadFrequently: true });
+    if (!context) return null;
+    context.drawImage(image, 0, 0);
+    const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
+    const alpha = new Uint8Array(canvas.width * canvas.height);
+    for (let i = 0; i < alpha.length; i += 1) alpha[i] = pixels[i * 4 + 3];
+    return { alpha, width: canvas.width, height: canvas.height };
   }
 
   function resetRun() {
@@ -181,13 +209,27 @@
   }
 
   function collided(obstacle) {
-    const width = Number.parseFloat(obstacle.image.style.width) || obstacle.image.naturalWidth / 2;
-    const height = Number.parseFloat(obstacle.image.style.height) || obstacle.image.naturalHeight / 2;
-    const dx = Math.abs(playerX - (obstacle.x - distance));
-    const dy = Math.abs(playerY - obstacle.y);
-    const rx = 13 + width * (obstacle.kind === "text" ? 0.22 : 0.3);
-    const ry = 13 + height * (obstacle.kind === "text" ? 0.32 : 0.3);
-    return (dx * dx) / (rx * rx) + (dy * dy) / (ry * ry) < 1;
+    const mask = obstacle.image.alphaMask;
+    if (!mask) return false;
+
+    const left = obstacle.x - distance - mask.width / 4;
+    const top = obstacle.y - mask.height / 4;
+    const xStart = Math.max(0, Math.floor((playerX - playerHitRadiusX - left) * 2));
+    const xEnd = Math.min(mask.width, Math.ceil((playerX + playerHitRadiusX - left) * 2));
+    const yStart = Math.max(0, Math.floor((playerY - playerHitRadiusY - top) * 2));
+    const yEnd = Math.min(mask.height, Math.ceil((playerY + playerHitRadiusY - top) * 2));
+
+    for (let y = yStart; y < yEnd; y += 1) {
+      const screenY = top + (y + 0.5) / 2;
+      const dy = (screenY - playerY) / playerHitRadiusY;
+      for (let x = xStart; x < xEnd; x += 1) {
+        if (mask.alpha[y * mask.width + x] < 96) continue;
+        const screenX = left + (x + 0.5) / 2;
+        const dx = (screenX - playerX) / playerHitRadiusX;
+        if (dx * dx + dy * dy <= 1) return true;
+      }
+    }
+    return false;
   }
 
   function finish(result) {
@@ -229,7 +271,8 @@
       distance += speed * dt;
       velocityY += 900 * dt;
       playerY += velocityY * dt;
-      if (playerY < 20 || playerY > 620) {
+      if (playerY - playerHitRadiusY <= gutTopInnerEdge ||
+          playerY + playerHitRadiusY >= gutBottomInnerEdge) {
         finish("fail");
         return;
       }
@@ -253,8 +296,10 @@
     rafId = requestAnimationFrame(frame);
   }
 
-  function onVisibilityChange() {
-    hidden = document.hidden;
+  function updateVisibility() {
+    const wasHidden = hidden;
+    hidden = document.hidden || pageHidden || !inViewport;
+    if (hidden === wasHidden) return;
     if (hidden) {
       if (rafId) cancelAnimationFrame(rafId);
       rafId = 0;
@@ -272,7 +317,22 @@
     }
   }
 
-  document.addEventListener("visibilitychange", onVisibilityChange);
+  document.addEventListener("visibilitychange", updateVisibility);
+  window.addEventListener("pagehide", () => {
+    pageHidden = true;
+    updateVisibility();
+  });
+  window.addEventListener("pageshow", () => {
+    pageHidden = false;
+    updateVisibility();
+  });
+  if ("IntersectionObserver" in window) {
+    const visibilityObserver = new IntersectionObserver(([entry]) => {
+      inViewport = entry.isIntersecting && entry.intersectionRatio > 0;
+      updateVisibility();
+    });
+    visibilityObserver.observe(stage);
+  }
   document.getElementById("startButton").addEventListener("pointerdown", (event) => {
     event.preventDefault();
     jump();
