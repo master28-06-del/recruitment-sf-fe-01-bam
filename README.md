@@ -1,9 +1,3 @@
-# Take-home task: Junior Frontend Engineer (SF-FE-01-BAM)
-
-Hi, and thanks for applying to We The Folks.
-
-This task is a small version of what you would do in your first weeks with us: take a designer's layout and a folder of exported assets and turn them into a working, animated rich media ad. It is based on real campaigns our team shipped this autumn.
-
 **Please complete both variants below.** Both are scored on the same criteria.
 
 - **Variant A: Game Ad** (a mobile tap-to-jump mini game)

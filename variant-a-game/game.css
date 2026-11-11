@@ -1,0 +1,261 @@
+:root {
+  color-scheme: dark;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #0d204c;
+  --navy: #0d204c;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: var(--navy);
+}
+
+body { touch-action: manipulation; }
+
+.viewport {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: var(--navy);
+  height: 100vh;
+  height: 100dvh;
+}
+
+.stage {
+  position: relative;
+  width: 360px;
+  height: 640px;
+  flex: none;
+  overflow: hidden;
+  transform-origin: center;
+  background: var(--navy);
+  isolation: isolate;
+}
+
+.start-screen, .game-screen, .end-screen {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+[hidden] { display: none !important; }
+
+.full-art {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 360px;
+  height: 640px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.intro-bg { animation: fade-in .65s ease-out both; }
+.intro-logo { animation: drop-in .8s cubic-bezier(.2,.8,.2,1) .1s both; }
+.intro-tutorial { animation: fade-in .8s ease-out .25s both; }
+
+.gesture {
+  position: absolute;
+  width: 86.5px;
+  height: 96px;
+  left: 165px;
+  top: 452px;
+  animation: hand-bob 1.35s ease-in-out .9s infinite;
+}
+
+.tap-label {
+  position: absolute;
+  z-index: 3;
+  top: 526px;
+  left: 0;
+  width: 100%;
+  margin: 0;
+  color: #fff;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: .2px;
+  text-shadow: 0 1px 3px #0d204c;
+  animation: fade-in .5s ease-out .65s both;
+  pointer-events: none;
+}
+
+.start-hit, .game-hit {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.gut {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  left: 0;
+  width: 2528px;
+  height: 640px;
+  max-width: none;
+  will-change: transform;
+}
+
+.gut-border {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  width: 360px;
+  height: 640px;
+  pointer-events: none;
+}
+
+.player {
+  position: absolute;
+  z-index: 2;
+  left: 65px;
+  top: 299px;
+  width: 42px;
+  height: 41px;
+  object-fit: contain;
+  transform-origin: 50% 50%;
+  will-change: transform;
+  pointer-events: none;
+}
+
+.obstacles { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+.obstacle {
+  position: absolute;
+  left: 0;
+  top: 0;
+  max-width: none;
+  object-fit: contain;
+  transform-origin: center;
+  will-change: transform;
+}
+
+.obstacle.debug::after {
+  content: "";
+  position: absolute;
+  inset: 20%;
+  border: 1px solid #ff3b64;
+}
+
+.ready-label {
+  position: absolute;
+  z-index: 4;
+  inset: 42% 0 auto;
+  margin: 0;
+  color: white;
+  text-align: center;
+  font-size: 25px;
+  font-weight: 800;
+  text-shadow: 0 2px 6px #0d204c;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ready-label.show { animation: ready-pop .8s ease-out both; }
+
+.end-screen {
+  z-index: 8;
+  background: var(--navy);
+}
+
+.end-bg { z-index: 0; }
+.end-layer { z-index: 1; }
+.end-bubble { animation: bubble-in .7s cubic-bezier(.2,.8,.2,1) both; }
+.end-character { animation: character-in .85s cubic-bezier(.2,.85,.25,1.15) .12s both; }
+.end-copy { animation: fade-up .75s ease-out .35s both; }
+.confetti { animation: confetti-in 1.1s cubic-bezier(.12,.75,.22,1) both, confetti-drift 5s ease-in-out 1s infinite alternate; }
+
+.end-cta {
+  position: absolute;
+  z-index: 4;
+  display: block;
+  left: 38.5px;
+  top: 482.5px;
+  width: 186px;
+  height: 38.5px;
+  transform-origin: center;
+  animation: cta-in .55s cubic-bezier(.2,.8,.2,1) .65s both;
+}
+
+.win-cta {
+  left: 27px;
+  top: 560px;
+  width: 214px;
+  height: 45.5px;
+}
+
+.end-cta img, .replay img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.replay {
+  position: absolute;
+  z-index: 4;
+  left: 38.5px;
+  top: 538.5px;
+  width: 185.5px;
+  height: 40.5px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  animation: cta-in .55s cubic-bezier(.2,.8,.2,1) .82s both;
+  cursor: pointer;
+}
+
+.mute {
+  position: absolute;
+  z-index: 12;
+  top: 10px;
+  right: 10px;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 65%);
+  border-radius: 50%;
+  color: #fff;
+  background: rgb(13 32 76 / 72%);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mute[aria-pressed="true"] { opacity: .65; }
+
+.debug .player { outline: 1px solid #20ffbc; }
+
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes drop-in { from { opacity: 0; transform: translateY(-12px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes hand-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes ready-pop { 0% { opacity: 0; transform: translateY(8px) scale(.95); } 35%,75% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-5px); } }
+@keyframes bubble-in { from { opacity: 0; transform: scale(.92); } to { opacity: 1; transform: scale(1); } }
+@keyframes character-in { from { opacity: 0; transform: translateY(20px) scale(.88); } 72% { opacity: 1; transform: translateY(-4px) scale(1.02); } to { transform: translateY(0) scale(1); } }
+@keyframes fade-up { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes cta-in { from { opacity: 0; transform: translateY(13px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes confetti-in { from { opacity: 0; transform: translateY(-14px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes confetti-drift { from { translate: 0 0; } to { translate: 0 5px; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
