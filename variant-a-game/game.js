@@ -120,20 +120,22 @@
       image.draggable = false;
       image.style.width = `${width / 2}px`;
       image.style.height = `${height / 2}px`;
-      image.addEventListener("load", () => {
-        image.style.width = `${image.naturalWidth / 2}px`;
-        image.style.height = `${image.naturalHeight / 2}px`;
-        image.alphaMask = createAlphaMask(image);
-      }, { once: true });
-      image.src = item.src;
-      obstacleLayer.appendChild(image);
-      return {
+      const obstacle = {
         image,
         kind: item.kind,
         x: 405 + index * 143,
         y: [268, 320, 372, 288, 380, 340, 260, 370, 300, 390, 275, 350, 380, 295, 360][index],
+        alphaMask: null,
         passed: false
       };
+      image.addEventListener("load", () => {
+        image.style.width = `${image.naturalWidth / 2}px`;
+        image.style.height = `${image.naturalHeight / 2}px`;
+        obstacle.alphaMask = createAlphaMask(image);
+      }, { once: true });
+      image.src = item.src;
+      obstacleLayer.appendChild(image);
+      return obstacle;
     });
   }
 
@@ -209,21 +211,34 @@
   }
 
   function collided(obstacle) {
-    const mask = obstacle.image.alphaMask;
-    if (!mask) return false;
+    const width = Number.parseFloat(obstacle.image.style.width) || obstacle.image.naturalWidth / 2;
+    const height = Number.parseFloat(obstacle.image.style.height) || obstacle.image.naturalHeight / 2;
+    const centerX = obstacle.x - distance;
+    const left = centerX - width / 2;
+    const top = obstacle.y - height / 2;
+    const overlapLeft = Math.max(left, playerX - playerHitRadiusX);
+    const overlapRight = Math.min(left + width, playerX + playerHitRadiusX);
+    const overlapTop = Math.max(top, playerY - playerHitRadiusY);
+    const overlapBottom = Math.min(top + height, playerY + playerHitRadiusY);
+    if (overlapLeft >= overlapRight || overlapTop >= overlapBottom) return false;
 
-    const left = obstacle.x - distance - mask.width / 4;
-    const top = obstacle.y - mask.height / 4;
-    const xStart = Math.max(0, Math.floor((playerX - playerHitRadiusX - left) * 2));
-    const xEnd = Math.min(mask.width, Math.ceil((playerX + playerHitRadiusX - left) * 2));
-    const yStart = Math.max(0, Math.floor((playerY - playerHitRadiusY - top) * 2));
-    const yEnd = Math.min(mask.height, Math.ceil((playerY + playerHitRadiusY - top) * 2));
+    const mask = obstacle.alphaMask;
+    if (!mask) {
+      const dx = (centerX - playerX) / (playerHitRadiusX + width * 0.3);
+      const dy = (obstacle.y - playerY) / (playerHitRadiusY + height * 0.3);
+      return dx * dx + dy * dy <= 1;
+    }
+
+    const xStart = Math.max(0, Math.floor((overlapLeft - left) * 2));
+    const xEnd = Math.min(mask.width, Math.ceil((overlapRight - left) * 2));
+    const yStart = Math.max(0, Math.floor((overlapTop - top) * 2));
+    const yEnd = Math.min(mask.height, Math.ceil((overlapBottom - top) * 2));
 
     for (let y = yStart; y < yEnd; y += 1) {
       const screenY = top + (y + 0.5) / 2;
       const dy = (screenY - playerY) / playerHitRadiusY;
       for (let x = xStart; x < xEnd; x += 1) {
-        if (mask.alpha[y * mask.width + x] < 96) continue;
+        if (mask.alpha[y * mask.width + x] < 32) continue;
         const screenX = left + (x + 0.5) / 2;
         const dx = (screenX - playerX) / playerHitRadiusX;
         if (dx * dx + dy * dy <= 1) return true;
@@ -278,13 +293,13 @@
       }
 
       for (const obstacle of obstacles) {
-        if (!obstacle.passed && obstacle.x - distance < playerX + 30 && obstacle.x - distance > playerX - 30) {
-          if (collided(obstacle)) {
-            finish("fail");
-            return;
-          }
+        if (obstacle.passed) continue;
+        if (collided(obstacle)) {
+          finish("fail");
+          return;
         }
-        if (!obstacle.passed && obstacle.x - distance < playerX - 26) obstacle.passed = true;
+        const width = Number.parseFloat(obstacle.image.style.width) || obstacle.image.naturalWidth / 2;
+        if (obstacle.x - distance + width / 2 < playerX - playerHitRadiusX) obstacle.passed = true;
       }
       if (distance >= sceneLength) {
         finish("win");

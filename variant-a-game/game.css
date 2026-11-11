@@ -67,17 +67,22 @@ body { touch-action: manipulation; }
 .start-gut-window, .gut-window {
   position: absolute;
   z-index: 1;
-  top: 0;
+  top: 168px;
   left: 0;
   width: 360px;
-  height: 640px;
+  height: 432px;
   overflow: hidden;
   pointer-events: none;
 }
 
+.gut-window .scene-texture {
+  top: -168px;
+  left: 0;
+}
+
 .start-gut {
   position: absolute;
-  top: 0;
+  top: -168px;
   left: 0;
   width: 2528px;
   height: 640px;
@@ -87,7 +92,13 @@ body { touch-action: manipulation; }
 .start-screen img { pointer-events: none; }
 .scene-texture { z-index: 0; }
 .start-border { z-index: 3; }
-.intro-logo, .intro-tutorial { z-index: 4; }
+.intro-tutorial, .intro-logo {
+  z-index: 6;
+  opacity: 1;
+  animation: none;
+}
+
+.intro-logo { z-index: 7; }
 
 .start-player {
   position: absolute;
@@ -110,8 +121,6 @@ body { touch-action: manipulation; }
 .start-tabu { left: 299px; top: 390px; width: 34px; height: 113px; }
 
 .intro-bg { animation: fade-in .65s ease-out both; }
-.intro-logo { animation: drop-in .8s cubic-bezier(.2,.8,.2,1) .1s both; }
-.intro-tutorial { animation: fade-in .8s ease-out .25s both; }
 
 .gesture {
   position: absolute;
@@ -155,7 +164,7 @@ body { touch-action: manipulation; }
 
 .gut {
   position: absolute;
-  top: 0;
+  top: -168px;
   left: 0;
   width: 2528px;
   height: 640px;
