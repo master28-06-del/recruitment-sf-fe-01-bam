@@ -33,6 +33,7 @@
   let state = "start";
   let rafId = 0;
   let failDelay = 0;
+  let endSound = null;
   let lastFrame = 0;
   let elapsed = 0;
   let playerY = 320;
@@ -47,6 +48,9 @@
 
   function resizeStage() {
     const scale = Math.min(window.innerWidth / 360, window.innerHeight / 640);
+    const logicalHeight = window.innerHeight / scale;
+    stage.style.height = `${logicalHeight}px`;
+    stage.style.setProperty("--content-offset", `${(logicalHeight - 640) / 2}px`);
     stage.style.transform = `scale(${scale})`;
   }
   window.addEventListener("resize", resizeStage, { passive: true });
@@ -85,12 +89,24 @@
       [deck[i], deck[j]] = [deck[j], deck[i]];
     }
 
+    const sizes = {
+      bac1: [125, 119], bac2: [43, 154], bac3: [158, 56],
+      bac4: [138, 68], bac5: [107, 87], bac6: [100, 95],
+      txt1: [46, 188], txt2: [68, 226], txt3: [47, 121],
+      txt4: [58, 169], txt5: [60, 362], txt6: [41, 289],
+      txt7: [59, 163], txt8: [37, 306], txt9: [51, 313]
+    };
+
     return deck.map((item, index) => {
       const image = document.createElement("img");
+      const key = item.src.match(/(?:bac|txt)\d+/)[0];
+      const [width, height] = sizes[key];
       image.className = `obstacle${debug ? " debug" : ""}`;
       image.src = item.src;
       image.alt = "";
       image.draggable = false;
+      image.style.width = `${width / 2}px`;
+      image.style.height = `${height / 2}px`;
       image.addEventListener("load", () => {
         image.style.width = `${image.naturalWidth / 2}px`;
         image.style.height = `${image.naturalHeight / 2}px`;
@@ -100,7 +116,7 @@
         image,
         kind: item.kind,
         x: 405 + index * 143,
-        y: [198, 300, 410, 260, 440, 340, 220, 390, 285, 455, 235, 350, 425, 270, 370][index],
+        y: [268, 320, 372, 288, 380, 340, 260, 370, 300, 390, 275, 350, 380, 295, 360][index],
         passed: false
       };
     });
@@ -109,6 +125,7 @@
   function resetRun() {
     stopLoop();
     stopSounds();
+    endSound = null;
     obstacleLayer.replaceChildren();
     obstacles = [];
     distance = 0;
@@ -177,13 +194,20 @@
     if (state === "ended") return;
     state = "ended";
     stopLoop();
+    sounds.music.pause();
+    sounds.music.currentTime = 0;
     gameScreen.hidden = true;
     if (result === "win") {
       winScreen.hidden = false;
+      endSound = sounds.applause;
       playSound(sounds.applause);
-      sounds.applause.onended = () => playSound(sounds.cheer);
+      sounds.applause.onended = () => {
+        endSound = sounds.cheer;
+        playSound(sounds.cheer);
+      };
     } else {
       failScreen.hidden = false;
+      endSound = sounds.fail;
       playSound(sounds.crash);
       failDelay = window.setTimeout(() => {
         failDelay = 0;
@@ -235,15 +259,16 @@
       if (rafId) cancelAnimationFrame(rafId);
       rafId = 0;
       lastFrame = 0;
+      if (failDelay) window.clearTimeout(failDelay);
+      failDelay = 0;
       Object.values(sounds).forEach((audio) => audio.pause());
       return;
     }
     if (state === "playing" || state === "ready") {
       playSound(sounds.music, false);
       if (!rafId) rafId = requestAnimationFrame(frame);
-    } else if (state === "ended") {
-      const activeEndSound = winScreen.hidden ? sounds.fail : sounds.applause;
-      if (activeEndSound.currentTime > 0 && !activeEndSound.ended) playSound(activeEndSound, false);
+    } else if (state === "ended" && endSound && !endSound.ended) {
+      playSound(endSound, false);
     }
   }
 
@@ -263,5 +288,6 @@
     muteButton.setAttribute("aria-label", muted ? "Ton einschalten" : "Ton ausschalten");
     if (muted) Object.values(sounds).forEach((audio) => audio.pause());
     else if (state === "playing" || state === "ready") playSound(sounds.music, false);
+    else if (state === "ended" && endSound) playSound(endSound, false);
   });
 })();
