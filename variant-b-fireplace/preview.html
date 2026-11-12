@@ -9,18 +9,25 @@
     * { box-sizing: border-box; }
     html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #252525; }
     .frame { position: fixed; inset: 0; display: grid; place-items: center; overflow: hidden; }
-    .skin { position: relative; width: 1672px; height: 975px; flex: none; transform-origin: center; }
-    iframe { position: absolute; display: block; border: 0; background: transparent; }
-    .left { left: 0; top: 0; width: 320px; height: 975px; }
-    .top { left: 320px; top: 0; width: 1032px; height: 250px; }
-    .website { position: absolute; left: 320px; top: 250px; width: 1032px; height: 725px; background: linear-gradient(135deg, #303030, #222); }
-    .right { left: 1352px; top: 0; width: 320px; height: 975px; }
+    .skin { position: relative; width: 1672px; height: 1009px; flex: none; transform-origin: center; }
+    iframe { position: absolute; display: block; border: 0; outline: 4px solid #777; outline-offset: -4px; background: #193020; }
+    .left { left: 0; top: 34px; width: 320px; height: 975px; }
+    .top { left: 320px; top: 34px; width: 1032px; height: 250px; }
+    .website { position: absolute; left: 320px; top: 284px; width: 1032px; height: 725px; background: linear-gradient(135deg, #303030, #222); }
+    .right { left: 1352px; top: 34px; width: 320px; height: 975px; }
+    .part-title { position: absolute; top: 0; height: 34px; display: flex; align-items: center; padding: 0 4px; color: #ddd; font: 16px Arial, Helvetica, sans-serif; }
+    .left-title { left: 0; width: 320px; }
+    .top-title { left: 320px; width: 1032px; }
+    .right-title { left: 1352px; width: 320px; }
     .debug { position: absolute; z-index: 10; inset: 0; border: 1px solid rgb(255 255 255 / 28%); pointer-events: none; }
   </style>
 </head>
 <body>
   <main class="frame">
     <div class="skin" id="skin">
+      <div class="part-title left-title">Fireplace_left</div>
+      <div class="part-title top-title">Fireplace_top</div>
+      <div class="part-title right-title">Fireplace_right</div>
       <iframe class="left" title="Left skyscraper" src="left.html?sync=1"></iframe>
       <iframe class="top" title="Top banner" src="top.html?sync=1"></iframe>
       <div class="website" aria-label="Publisher website placeholder"></div>
@@ -34,15 +41,17 @@
       const frames = Array.from(document.querySelectorAll("iframe"));
       const ready = new Set();
       const debug = new URLSearchParams(location.search).has("debug");
+      const messageOrigin = location.origin === "null" ? "*" : location.origin;
       if (debug) document.querySelector(".debug").hidden = false;
 
       function fit() {
-        const scale = Math.min(window.innerWidth / 1672, window.innerHeight / 975);
+        const scale = Math.min(window.innerWidth / 1672, window.innerHeight / 1009);
         skin.style.transform = `scale(${scale})`;
       }
       function startFrames() {
-        const message = { type: "fireplace-start", at: Date.now() + 350 };
-        frames.forEach((frame) => frame.contentWindow.postMessage(message, location.origin));
+        const startAt = Date.now() + 350;
+        const message = { type: "fireplace-start", at: startAt };
+        frames.forEach((frame) => frame.contentWindow.postMessage(message, messageOrigin));
       }
 
       window.addEventListener("resize", fit, { passive: true });

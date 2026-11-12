@@ -7,29 +7,52 @@
 
   const params = new URLSearchParams(location.search);
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  let startTimer = 0;
+  const messageOrigin = location.origin === "null" ? "*" : location.origin;
+  let started = false;
 
-  function startAt(deadline) {
+  function startAt(timestamp) {
+    if (started) return;
+    started = true;
+
     if (reducedMotion) {
       document.body.classList.add("animate");
       return;
     }
-    window.clearTimeout(startTimer);
-    startTimer = window.setTimeout(
-      () => document.body.classList.add("animate"),
-      Math.max(0, deadline - Date.now())
-    );
+
+    const delay = Math.max(0, timestamp - Date.now());
+    const kickOff = () => document.body.classList.add("animate");
+
+    if (delay <= 0) {
+      kickOff();
+      return;
+    }
+
+    requestAnimationFrame(() => {
+      window.setTimeout(kickOff, delay);
+    });
   }
 
   if (params.has("sync") && window.parent !== window) {
-    window.parent.postMessage({ type: "fireplace-ready" }, location.origin);
     window.addEventListener("message", (event) => {
       if (event.source !== window.parent || event.origin !== location.origin) return;
       if (event.data?.type === "fireplace-start" && Number.isFinite(event.data.at)) {
         startAt(event.data.at);
       }
     });
+  }
+
+  function assetsReady() {
+    if (params.has("sync") && window.parent !== window) {
+      window.parent.postMessage({ type: "fireplace-ready" }, messageOrigin);
+      window.setTimeout(() => startAt(Date.now() + 180), 1200);
+    } else {
+      startAt(Date.now() + 180);
+    }
+  }
+
+  if (document.readyState === "complete") {
+    assetsReady();
   } else {
-    startAt(Date.now() + 180);
+    window.addEventListener("load", assetsReady, { once: true });
   }
 })();

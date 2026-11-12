@@ -26,6 +26,8 @@ body {
   isolation: isolate;
 }
 
+body:not(.animate) .creative { visibility: hidden; }
+
 .creative.top { width: 1032px; height: 250px; }
 .creative.side { width: 320px; height: 975px; }
 
@@ -81,12 +83,20 @@ body {
 
 .click-area {
   position: absolute;
-  z-index: 8;
+  z-index: 3;
   inset: 0;
   display: block;
   cursor: pointer;
   background: transparent;
   -webkit-tap-highlight-color: transparent;
+}
+
+.side .click-area {
+  inset: auto;
+  left: 73.75px;
+  top: 865px;
+  width: 172.5px;
+  height: 46.5px;
 }
 
 body.animate .scene {
@@ -100,7 +110,7 @@ body.animate .logo-layer {
 
 body.animate .box-layer { animation: panel-in .85s ease-out 2.45s both; }
 body.animate .copy-layer { animation: copy-in .9s ease-out 2.85s both; }
-body.animate .cta-layer { animation: cta-in .65s cubic-bezier(.2,.8,.2,1) 3.9s both, cta-pulse 3s ease-in-out 5s 10; }
+body.animate .cta-layer { animation: cta-in .65s cubic-bezier(.2,.8,.2,1) 3.9s both, cta-pulse 3s ease-in-out 5s 10 both; }
 
 body.animate .line-one { animation: headline-line .65s ease-out 1.05s both; }
 body.animate .line-two { animation: headline-line .65s ease-out 1.75s both; }
