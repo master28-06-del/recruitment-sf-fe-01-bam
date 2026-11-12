@@ -35,6 +35,7 @@
   let rafId = 0;
   let failDelay = 0;
   let endSound = null;
+  let failSoundPlayed = false;
   let lastFrame = 0;
   let elapsed = 0;
   let playerY = 320;
@@ -156,6 +157,7 @@
     stopLoop();
     stopSounds();
     endSound = null;
+    failSoundPlayed = false;
     obstacleLayer.replaceChildren();
     obstacles = [];
     distance = 0;
@@ -254,23 +256,30 @@
     sounds.music.pause();
     sounds.music.currentTime = 0;
     gameScreen.hidden = true;
+
     if (result === "win") {
       winScreen.hidden = false;
       endSound = sounds.applause;
       playSound(sounds.applause);
       sounds.applause.onended = () => {
+        if (state !== "ended") return;
         endSound = sounds.cheer;
         playSound(sounds.cheer);
       };
-    } else {
-      failScreen.hidden = false;
-      endSound = sounds.fail;
-      playSound(sounds.crash);
-      failDelay = window.setTimeout(() => {
-        failDelay = 0;
-        if (state === "ended" && !hidden) playSound(sounds.fail);
-      }, 520);
+      return;
     }
+
+    failScreen.hidden = false;
+    endSound = sounds.fail;
+    playSound(sounds.crash);
+    failSoundPlayed = false;
+    failDelay = window.setTimeout(() => {
+      failDelay = 0;
+      if (state === "ended" && !hidden && !failSoundPlayed) {
+        failSoundPlayed = true;
+        playSound(sounds.fail);
+      }
+    }, 520);
   }
 
   function frame(timestamp) {
