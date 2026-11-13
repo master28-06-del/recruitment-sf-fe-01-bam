@@ -1,77 +1,217 @@
 <!doctype html>
 <html lang="de">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0d204c">
-  <title>Gut Run</title>
-  <link rel="stylesheet" href="game.css">
-</head>
-<body>
-  <main class="viewport" aria-label="Gut Run game ad">
-    <div class="stage" id="stage">
-      <div class="start-screen" id="startScreen">
-        <img class="full-art intro-bg" src="assets/bg.jpg" alt="">
-        <div class="start-gut-window gut-window" aria-hidden="true">
-          <img class="full-art scene-texture" src="assets/01_game/bg_texture.png" alt="">
-          <img class="start-gut" src="assets/01_game/gameplay.png" alt="">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#0d204c" />
+    <title>Gut Run</title>
+    <link rel="stylesheet" href="game.css" />
+  </head>
+  <body>
+    <main class="viewport" aria-label="Gut Run game ad">
+      <div class="stage" id="stage">
+        <div class="start-screen" id="startScreen">
+          <img class="full-art intro-bg" src="assets/bg.jpg" alt="" />
+          <div class="start-gut-window gut-window" aria-hidden="true">
+            <img
+              class="full-art scene-texture"
+              src="assets/01_game/bg_texture.png"
+              alt=""
+            />
+            <img class="start-gut" src="assets/01_game/gameplay.png" alt="" />
+          </div>
+          <img class="start-player" src="assets/01_game/player.png" alt="" />
+          <img
+            class="start-obstacle start-bacteria"
+            src="assets/01_game/bac6.png"
+            alt=""
+          />
+          <img
+            class="start-obstacle start-stress"
+            src="assets/01_game/txt1.png"
+            alt=""
+          />
+          <img
+            class="start-obstacle start-worm"
+            src="assets/01_game/bac2.png"
+            alt=""
+          />
+          <img
+            class="start-obstacle start-tabu"
+            src="assets/01_game/txt2.png"
+            alt=""
+          />
+          <img class="full-art start-border" src="assets/border.png" alt="" />
+          <img
+            class="full-art intro-logo"
+            src="assets/logo.png"
+            alt="Your logo"
+          />
+          <img
+            class="full-art intro-tutorial"
+            src="assets/01_game/tut.png"
+            alt=""
+          />
+          <img class="gesture" src="assets/gesture.png" alt="" />
+          <button
+            class="start-hit"
+            id="startButton"
+            aria-label="Tap to start the game"
+          ></button>
         </div>
-        <img class="start-player" src="assets/01_game/player.png" alt="">
-        <img class="start-obstacle start-bacteria" src="assets/01_game/bac1.png" alt="">
-        <img class="start-obstacle start-stress" src="assets/01_game/txt1.png" alt="">
-        <img class="start-obstacle start-worm" src="assets/01_game/bac2.png" alt="">
-        <img class="start-obstacle start-tabu" src="assets/01_game/txt2.png" alt="">
-        <img class="full-art start-border" src="assets/border.png" alt="">
-        <img class="full-art intro-logo" src="assets/logo.png" alt="Your logo">
-        <img class="full-art intro-tutorial" src="assets/01_game/tut.png" alt="">
-        <img class="gesture" src="assets/gesture.png" alt="">
-        <button class="start-hit" id="startButton" aria-label="Tap to start the game"></button>
-      </div>
 
-      <section class="game-screen" id="gameScreen" aria-label="Gameplay" hidden>
-        <div class="gut-window" aria-hidden="true">
-          <img class="full-art scene-texture" src="assets/01_game/bg_texture.png" alt="">
-          <img class="gut" id="gut" src="assets/01_game/gameplay.png" alt="">
-        </div>
-        <div class="obstacles" id="obstacles"></div>
-        <img class="player" id="player" src="assets/01_game/player.png" alt="">
-        <img class="gut-border" src="assets/border.png" alt="">
-        <p class="ready-label" id="readyLabel" aria-live="polite">Fertig?</p>
-        <button class="game-hit" id="gameHit" aria-label="Tap to jump"></button>
-      </section>
+        <section
+          class="game-screen"
+          id="gameScreen"
+          aria-label="Gameplay"
+          hidden
+        >
+          <div class="gut-window" aria-hidden="true">
+            <img
+              class="full-art scene-texture"
+              src="assets/01_game/bg_texture.png"
+              alt=""
+            />
+            <img
+              class="gut"
+              id="gut"
+              src="assets/01_game/gameplay.png"
+              alt=""
+            />
+          </div>
+          <div class="obstacles" id="obstacles"></div>
+          <img
+            class="player"
+            id="player"
+            src="assets/01_game/player.png"
+            alt=""
+          />
+          <img class="gut-border" src="assets/border.png" alt="" />
+          <p class="ready-label" id="readyLabel" aria-live="polite">Fertig?</p>
+          <button
+            class="game-hit"
+            id="gameHit"
+            aria-label="Tap to jump"
+          ></button>
+        </section>
 
-      <section class="end-screen" id="failScreen" aria-label="Game over" hidden>
-        <img class="full-art end-bg" src="assets/bg.jpg" alt="">
-        <img class="full-art end-layer end-bubble" src="assets/02_endcard/fail/bubble.png" alt="">
-        <img class="full-art end-layer" src="assets/02_endcard/fail/bac1.png" alt="">
-        <img class="full-art end-layer" src="assets/02_endcard/fail/bac2.png" alt="">
-        <img class="full-art end-layer" src="assets/02_endcard/fail/bac3.png" alt="">
-        <img class="full-art end-layer" src="assets/02_endcard/fail/bac4.png" alt="">
-        <img class="full-art end-layer" src="assets/02_endcard/fail/bac5.png" alt="">
-        <img class="full-art end-layer end-character" src="assets/02_endcard/fail/sad.png" alt="">
-        <img class="full-art end-layer end-copy" src="assets/02_endcard/fail/hl.png" alt="">
-        <a class="end-cta clickout" href="https://example.com/landing" target="_blank" rel="noopener" aria-label="Jetzt informieren">
-          <img src="assets/02_endcard/fail/cta.png" alt="Jetzt informieren!">
-        </a>
-        <button class="replay" id="replayButton" aria-label="Nochmal spielen">
-          <img src="assets/02_endcard/fail/replay.png" alt="Nochmal spielen">
+        <section
+          class="end-screen"
+          id="failScreen"
+          aria-label="Game over"
+          hidden
+        >
+          <img class="full-art end-bg" src="assets/bg.jpg" alt="" />
+          <img
+            class="full-art end-layer end-bubble"
+            src="assets/02_endcard/fail/bubble.png"
+            alt=""
+          />
+          <img
+            class="full-art end-layer"
+            src="assets/02_endcard/fail/bac1.png"
+            alt=""
+          />
+          <img
+            class="full-art end-layer"
+            src="assets/02_endcard/fail/bac2.png"
+            alt=""
+          />
+          <img
+            class="full-art end-layer"
+            src="assets/02_endcard/fail/bac3.png"
+            alt=""
+          />
+          <img
+            class="full-art end-layer"
+            src="assets/02_endcard/fail/bac4.png"
+            alt=""
+          />
+          <img
+            class="full-art end-layer"
+            src="assets/02_endcard/fail/bac5.png"
+            alt=""
+          />
+          <img
+            class="full-art end-layer end-character"
+            src="assets/02_endcard/fail/sad.png"
+            alt=""
+          />
+          <img
+            class="full-art end-layer end-copy"
+            src="assets/02_endcard/fail/hl.png"
+            alt=""
+          />
+          <a
+            class="end-cta clickout"
+            href="https://example.com/landing"
+            target="_blank"
+            rel="noopener"
+            aria-label="Jetzt informieren"
+          >
+            <img
+              src="assets/02_endcard/fail/cta.png"
+              alt="Jetzt informieren!"
+            />
+          </a>
+          <button class="replay" id="replayButton" aria-label="Nochmal spielen">
+            <img
+              src="assets/02_endcard/fail/replay.png"
+              alt="Nochmal spielen"
+            />
+          </button>
+        </section>
+
+        <section class="end-screen" id="winScreen" aria-label="Gewonnen" hidden>
+          <img class="full-art end-bg" src="assets/bg.jpg" alt="" />
+          <img
+            class="full-art end-layer end-bubble"
+            src="assets/02_endcard/win/bubble.png"
+            alt=""
+          />
+          <img
+            class="full-art end-layer confetti"
+            src="assets/02_endcard/win/konfetti.png"
+            alt=""
+          />
+          <img
+            class="full-art end-layer end-character"
+            src="assets/02_endcard/win/happy.png"
+            alt=""
+          />
+          <img
+            class="full-art end-layer end-copy"
+            src="assets/02_endcard/win/hl.png"
+            alt=""
+          />
+          <a
+            class="end-cta win-cta clickout"
+            href="https://example.com/landing"
+            target="_blank"
+            rel="noopener"
+            aria-label="Jetzt mehr erfahren"
+          >
+            <img
+              src="assets/02_endcard/win/cta.png"
+              alt="Jetzt mehr erfahren"
+            />
+          </a>
+        </section>
+
+        <button
+          class="mute"
+          id="muteButton"
+          type="button"
+          aria-label="Ton ausschalten"
+          aria-pressed="false"
+        >
+          ♪
         </button>
-      </section>
-
-      <section class="end-screen" id="winScreen" aria-label="Gewonnen" hidden>
-        <img class="full-art end-bg" src="assets/bg.jpg" alt="">
-        <img class="full-art end-layer end-bubble" src="assets/02_endcard/win/bubble.png" alt="">
-        <img class="full-art end-layer confetti" src="assets/02_endcard/win/konfetti.png" alt="">
-        <img class="full-art end-layer end-character" src="assets/02_endcard/win/happy.png" alt="">
-        <img class="full-art end-layer end-copy" src="assets/02_endcard/win/hl.png" alt="">
-        <a class="end-cta win-cta clickout" href="https://example.com/landing" target="_blank" rel="noopener" aria-label="Jetzt mehr erfahren">
-          <img src="assets/02_endcard/win/cta.png" alt="Jetzt mehr erfahren">
-        </a>
-      </section>
-
-      <button class="mute" id="muteButton" type="button" aria-label="Ton ausschalten" aria-pressed="false">♪</button>
-    </div>
-  </main>
-  <script src="game.js"></script>
-</body>
+      </div>
+    </main>
+    <script src="game.js"></script>
+  </body>
 </html>
