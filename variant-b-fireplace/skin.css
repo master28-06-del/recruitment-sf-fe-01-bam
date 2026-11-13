@@ -17,7 +17,6 @@ body {
 
 body {
   position: relative;
-  background: #193020;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
@@ -76,6 +75,7 @@ body:not(.animate) .creative {
 }
 .box-layer {
   z-index: 2;
+  opacity: 0;
 }
 .copy-layer {
   mix-blend-mode: screen;
@@ -85,7 +85,7 @@ body:not(.animate) .creative {
   position: absolute;
   z-index: 4;
   left: 73.75px;
-  top: 824px;
+  top: 840px;
   display: block;
   width: 172.5px;
   height: 46.5px;
@@ -102,7 +102,7 @@ body:not(.animate) .creative {
   clip-path: var(--line-clip);
 }
 .top .line-two {
-  --line-clip: inset(31% 0 35% 0);
+  --line-clip: inset(32% 0 37% 0);
   clip-path: var(--line-clip);
 }
 .top .line-three {
@@ -123,7 +123,7 @@ body:not(.animate) .creative {
 .side .click-area {
   inset: auto;
   left: 73.75px;
-  top: 824px;
+  top: 840px;
   width: 172.5px;
   height: 46.5px;
 }
@@ -131,7 +131,8 @@ body:not(.animate) .creative {
 body.animate .scene {
   animation:
     scene-intro 5.2s cubic-bezier(0.18, 0.72, 0.24, 1) both,
-    scene-drift 30s ease-in-out 5.2s 1 both;
+    scene-drift 25s ease-in-out 5.2s 1 both,
+    scene-reveal 2.4s ease-out both;
 }
 
 body.animate .logo-layer {
@@ -147,7 +148,7 @@ body.animate .copy-layer {
 body.animate .cta-layer {
   animation:
     cta-in 0.65s cubic-bezier(0.2, 0.8, 0.2, 1) 3.9s both,
-    cta-pulse 3s ease-in-out 5s 10 both;
+    cta-pulse 3s ease-in-out 5s 8 both;
 }
 
 body.animate .line-one {
@@ -170,6 +171,15 @@ body.animate .line-three {
   }
   to {
     transform: scale(1);
+  }
+}
+
+@keyframes scene-reveal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }
 
@@ -198,11 +208,11 @@ body.animate .line-three {
 
 @keyframes panel-in {
   from {
-    opacity: 0.25;
-    transform: translateY(8px);
+    opacity: 0;
+    transform: translateY(18px);
   }
   to {
-    opacity: 1;
+    opacity: 0.9;
     transform: translateY(0);
   }
 }
@@ -210,7 +220,7 @@ body.animate .line-three {
 @keyframes copy-in {
   from {
     opacity: 0;
-    transform: translateY(9px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -232,9 +242,11 @@ body.animate .line-three {
 @keyframes cta-in {
   from {
     opacity: 0;
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -244,7 +256,7 @@ body.animate .line-three {
     transform: scale(1);
   }
   50% {
-    transform: scale(1.015);
+    transform: scale(1.1);
   }
 }
 
@@ -259,5 +271,8 @@ body.animate .line-three {
   body.animate .top .line {
     opacity: 1;
   }
+
+  body.animate .box-layer {
+    opacity: 0.9;
+  }
 }
- 

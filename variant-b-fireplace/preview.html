@@ -20,76 +20,147 @@
       .frame {
         position: fixed;
         inset: 0;
-        display: grid;
-        place-items: center;
         overflow: hidden;
         padding: 5px;
       }
       .skin {
-        position: relative;
-        width: 1672px;
-        height: 1009px;
-        margin: 1px;
-        flex: none;
-        transform-origin: center;
+        position: fixed;
+        width: 1684px;
+        height: 1018px;
+        transform-origin: top left;
       }
       iframe {
         position: absolute;
         display: block;
         border: 0;
-        outline: 4px solid #777;
+        outline: 4px solid transparent;
         outline-offset: -4px;
-        background: #193020;
+        transform-origin: top left;
       }
       .left {
-        left: 0;
-        top: 34px;
-        width: 320px;
-        height: 975px;
+        left: 22px;
+        top: 44px;
+        width: 330px;
+        height: 985px;
+        z-index: 3;
+        transform: scale(0.975);
       }
       .top {
-        left: 320px;
-        top: 34px;
+        left: 341px;
+        top: 49px;
         width: 1032px;
         height: 250px;
+        z-index: 4;
+        transform: scale(0.975);
       }
       .website {
         position: absolute;
-        left: 320px;
-        top: 284px;
-        width: 1032px;
-        height: 725px;
-        background: linear-gradient(135deg, #303030, #222);
+        left: 345px;
+        top: 299px;
+        width: 1002px;
+        height: 702px;
+        background: #252525;
       }
       .right {
-        left: 1352px;
-        top: 34px;
+        left: 1347px;
+        top: 43px;
+        width: 332px;
+        height: 987px;
+        transform: scale(0.975);
+      }
+      .left {
+        padding: 6px 4px 6px 6px;
+      }
+      .right {
+        padding: 8px 0px 6px 2px;
+      }
+      .top {
+        padding-top: 2px;
+      }
+      .left-right-border {
+        position: absolute;
+        z-index: 20;
+        left: 23px;
+        top: 45px;
+        width: 322px;
+        height: 960px;
+        border: 4px solid #777;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .top-panel-border {
+        position: absolute;
+        z-index: 20;
+        left: 339px;
+        top: 45px;
+        width: 1014px;
+        height: 254px;
+        border: 4px solid #777;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .right-panel-border {
+        position: absolute;
+        z-index: 20;
+        left: 1347px;
+        top: 45px;
         width: 320px;
-        height: 975px;
+        height: 960px;
+        border: 4px solid #777;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .left-top-join,
+      .top-right-join {
+        position: absolute;
+        z-index: 21;
+        top: 45px;
+        width: 4px;
+        height: 254px;
+        background: #777;
+        opacity: 0;
+        pointer-events: none;
+      }
+      .left-top-join {
+        left: 338px;
+      }
+      .top-right-join {
+        left: 1346px;
+      }
+      .skin.borders-visible .left-right-border,
+      .skin.borders-visible .top-panel-border,
+      .skin.borders-visible .right-panel-border,
+      .skin.borders-visible .left-top-join,
+      .skin.borders-visible .top-right-join {
+        opacity: 1;
       }
       .part-title {
         position: absolute;
-        top: 0;
-        height: 34px;
+        top: 5px;
+        height: 29px;
         display: flex;
         align-items: center;
-        padding: 0 4px;
+        padding: 4px 8px;
         color: #ddd;
+        opacity: 0;
         font:
-          16px Arial,
+          600 20px Arial,
           Helvetica,
           sans-serif;
       }
+      .skin.borders-visible .part-title {
+        opacity: 1;
+      }
       .left-title {
-        left: 0;
+        left: 20px;
         width: 320px;
       }
       .top-title {
-        left: 320px;
+        left: 335px;
         width: 1032px;
       }
       .right-title {
-        left: 1352px;
+        left: 1342px;
         width: 320px;
       }
       .debug {
@@ -102,52 +173,81 @@
     </style>
   </head>
   <body>
-    <main class="frame">
-      <div class="skin" id="skin">
-        <div class="part-title left-title">Fireplace_left</div>
-        <div class="part-title top-title">Fireplace_top</div>
-        <div class="part-title right-title">Fireplace_right</div>
-        <iframe
-          class="left"
-          title="Left skyscraper"
-          src="left.html?sync=1"
-        ></iframe>
-        <iframe class="top" title="Top banner" src="top.html?sync=1"></iframe>
-        <div class="website" aria-label="Publisher website placeholder"></div>
-        <iframe
-          class="right"
-          title="Right skyscraper"
-          src="right.html?sync=1"
-        ></iframe>
-        <div class="debug" hidden></div>
-      </div>
-    </main>
+    <div class="skin" id="skin">
+      <div class="part-title left-title">Fireplace_left</div>
+      <div class="part-title top-title">Fireplace_top</div>
+      <div class="part-title right-title">Fireplace_right</div>
+      <iframe
+        class="left"
+        title="Left skyscraper"
+        src="left.html?sync=1"
+      ></iframe>
+      <iframe class="top" title="Top banner" src="top.html?sync=1"></iframe>
+      <div class="website" aria-label="Publisher website placeholder"></div>
+      <iframe
+        class="right"
+        title="Right skyscraper"
+        src="right.html?sync=1"
+      ></iframe>
+      <div class="left-right-border" aria-hidden="true"></div>
+      <div class="top-panel-border" aria-hidden="true"></div>
+      <div class="right-panel-border" aria-hidden="true"></div>
+      <div class="left-top-join" aria-hidden="true"></div>
+      <div class="top-right-join" aria-hidden="true"></div>
+      <div class="debug" hidden></div>
+    </div>
     <script>
       (() => {
         const skin = document.getElementById("skin");
         const frames = Array.from(document.querySelectorAll("iframe"));
         const ready = new Set();
+        let started = false;
         const debug = new URLSearchParams(location.search).has("debug");
         const messageOrigin =
           location.origin === "null" ? "*" : location.origin;
         if (debug) document.querySelector(".debug").hidden = false;
 
         function fit() {
-          const scale = Math.min(
-            (window.innerWidth - 10) / 1672,
-            (window.innerHeight - 10) / 1009,
+          const viewportWidth = document.documentElement.clientWidth;
+          const viewportHeight = document.documentElement.clientHeight;
+          const scale = Math.max(
+            0,
+            Math.min(
+              1,
+              (viewportWidth - 10) / skin.offsetWidth,
+              (viewportHeight - 20) / skin.offsetHeight,
+            ),
           );
+          skin.style.left = `${(viewportWidth - skin.offsetWidth * scale) / 2}px`;
+          skin.style.top = "10px";
           skin.style.transform = `scale(${scale})`;
         }
         function startFrames() {
-          const startAt = Date.now() + 350;
+          if (started) return;
+          started = true;
+          const startAt = Date.now();
           const message = { type: "fireplace-start", at: startAt };
+          skin.classList.add("animate");
+          window.setTimeout(() => skin.classList.add("borders-visible"), 1500);
           frames.forEach((frame) =>
             frame.contentWindow.postMessage(message, messageOrigin),
           );
         }
 
+        window.addEventListener(
+          "load",
+          () => {
+            if (ready.size !== frames.length) startFrames();
+          },
+          { once: true },
+        );
         window.addEventListener("resize", fit, { passive: true });
+        window.visualViewport?.addEventListener("resize", fit, {
+          passive: true,
+        });
+        if ("ResizeObserver" in window) {
+          new ResizeObserver(fit).observe(document.documentElement);
+        }
         window.addEventListener("message", (event) => {
           if (
             event.origin !== location.origin ||
